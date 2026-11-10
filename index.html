@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফ্ল্যাট ওনার ম্যানেজমেন্ট সিস্টেম (২৪ ফ্ল্যাট, ১৪ গ্যারেজ)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- লগইন বা রেজিস্ট্রেশন সেকশন -->
+    <div id="auth-container" class="auth-wrapper">
+        <div class="auth-box">
+            <h2>অ্যাপার্টমেন্ট ম্যানেজমেন্ট সিস্টেম</h2>
+            <div class="tab-buttons">
+                <button onclick="switchAuthTab('login')" id="loginTabBtn" class="active-tab">লগইন</button>
+                <button onclick="switchAuthTab('register')" id="regTabBtn">রেজিস্ট্রেশন</button>
+            </div>
+
+            <!-- লগইন ফর্ম -->
+            <div id="loginForm" class="auth-form active">
+                <input type="text" id="loginMobile" placeholder="মোবাইল নম্বর (ইউজার আইডি)">
+                <input type="password" id="loginPass" placeholder="পাসওয়ার্ড">
+                <button onclick="handleLogin()">লগইন করুন</button>
+            </div>
+
+            <!-- রেজিস্ট্রেশন ফর্ম -->
+            <div id="registerForm" class="auth-form" style="display: none;">
+                <input type="text" id="regName" placeholder="আপনার নাম">
+                <input type="text" id="regFlat" placeholder="ফ্ল্যাট নম্বর (যেমন: A-101)">
+                <input type="text" id="regMobile" placeholder="মোবাইল নম্বর (ইউজার আইডি)">
+                <input type="password" id="regPass" placeholder="পাসওয়ার্ড">
+                <button onclick="handleRegister()">রেজিস্ট্রেশন সম্পন্ন করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- মূল ড্যাশবোর্ড (লগইন করার পর দেখাবে) -->
+    <div id="dashboard-container" class="dashboard-wrapper" style="display: none;">
+        <div class="sidebar">
+            <h2>বিল্ডিং ড্যাশবোর্ড</h2>
+            <ul>
+                <li><a href="#" class="tab-link active" onclick="switchDashboardTab('overview')">ওভারভিউ (২৪ ফ্ল্যাট/১৪ গ্যারেজ)</a></li>
+                <li><a href="#" class="tab-link" onclick="switchDashboardTab('collection')">মাসিক চার্জ (৳৩০০০)</a></li>
+                <li><a href="#" class="tab-link" onclick="switchDashboardTab('staff')">সিকিউরিটি গার্ড (২ জন)</a></li>
+                <li><a href="#" class="tab-link" onclick="switchDashboardTab('notice')">নোটিশ বোর্ড</a></li>
+                <li><a href="#" class="tab-link" onclick="handleLogout()" style="color: #ffcccc;">লগআউট</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <!-- ১. ওভারভিউ ট্যাব -->
+            <div id="overview" class="dash-content active">
+                <h2>অ্যাপার্টমেন্ট ওভারভিউ</h2>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>মোট ফ্ল্যাট</h3><p>২৪ টি</p></div>
+                    <div class="stat-card"><h3>মোট গ্যারেজ</h3><p>১৪ টি</p></div>
+                    <div class="stat-card"><h3>সিকিউরিটি গার্ড</h3><p>২ জন</p></div>
+                    <div class="stat-card"><h3>মাসিক সার্ভিস চার্জ</h3><p>৳ ৩,০০০</p></div>
+                </div>
+                <h3>রেজিস্টার্ড ইউজারগণ</h3>
+                <div class="table-container">
+                    <table id="userTable">
+                        <tr><th>নাম</th><th>ফ্ল্যাট নং</th><th>মোবাইল নম্বর</th></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ২. মাসিক চার্জ ট্যাব -->
+            <div id="collection" class="dash-content">
+                <h2>মাসিক সার্ভিস চার্জ ট্র্যাকিং (৳৩,০০০)</h2>
+                <div class="form-box">
+                    <input type="text" id="feeFlat" placeholder="ফ্ল্যাট নম্বর (যেমন: A-101)">
+                    <input type="text" id="feeMonth" placeholder="মাস (যেমন: January 2026)">
+                    <select id="feeStatus">
+                        <option value="Paid">পরিশোধিত (৳৩০০০)</option>
+                        <option value="Unpaid">বকেয়া</option>
+                    </select>
+                    <button onclick="addFeeRecord()">স্ট্যাটাস আপডেট করুন</button>
+                </div>
+                <div class="table-container">
+                    <table id="feeTable">
+                        <tr><th>ফ্ল্যাট নং</th><th>মাস</th><th>পরিমাণ</th><th>স্ট্যাটাস</th></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ৩. স্টাফ ম্যানেজমেন্ট (সিকিউরিটি গার্ড) -->
+            <div id="staff" class="dash-content">
+                <h2>সিকিউরিটি গার্ড তথ্য (২ জন)</h2>
+                <div class="table-container">
+                    <table>
+                        <tr><th>গার্ডের নাম</th><th>শিফট</th><th>মোবাইল নম্বর</th><th>বেতন</th></tr>
+                        <tr><td>মোঃ রহিম উদ্দিন</td><td>দিন শিফট (Day)</td><td>01711-xxxxxx</td><td>৳ ১২,০০০</td></tr>
+                        <tr><td>মোঃ করিম মিয়া</td><td>রাত শিফট (Night)</td><td>01811-xxxxxx</td><td>৳ ১২,০০০</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ৪. নোটিশ বোর্ড -->
+            <div id="notice" class="dash-content">
+                <h2>নোটিশ বোর্ড</h2>
+                <div class="form-box">
+                    <input type="text" id="noticeTitle" placeholder="নোটিশের শিরোনাম" style="width: 100%;">
+                    <textarea id="noticeDesc" placeholder="বিস্তারিত বিবরণ..." style="width: 100%; height: 80px; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                    <button onclick="addNotice()" style="margin-top: 10px;">নোটিশ প্রকাশ করুন</button>
+                </div>
+                <div id="noticeContainer" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
